@@ -1,0 +1,24 @@
+{
+	"version" : "2017-02-28",
+    "operation": "UpdateItem",
+    "key": {
+        "id": $util.dynamodb.toDynamoDBJson($ctx.args.id)
+    },
+    "update": {
+    	"expression" : "#if(($context.arguments.user1state))SET user1state=:1state#{end}#if(($context.arguments.user2state))SET user2state=:2state#{end}",
+        "expressionValues": {
+            #if(($context.arguments.user1state))
+            ":1state":$util.dynamodb.toStringJson($ctx.args.user1state)
+            #end
+            #if(($context.arguments.user2state))
+            ":2state":$util.dynamodb.toStringJson($ctx.args.user2state)
+            #end
+        }
+    },
+    "condition": {
+        "expression": "attribute_exists(#id)",
+        "expressionNames": {
+            "#id": "id"
+        }
+    }
+}

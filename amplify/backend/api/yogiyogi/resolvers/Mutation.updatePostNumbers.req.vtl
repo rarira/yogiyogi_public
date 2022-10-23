@@ -1,0 +1,29 @@
+{
+	"version" : "2017-02-28",
+    "operation": "UpdateItem",
+    "key": {
+        "id": $util.dynamodb.toDynamoDBJson($ctx.args.id)
+        ## "createdAt": $util.dynamodb.toDynamoDBJson($ctx.args.postCreatedAt)
+    },
+    "update": {
+    	"expression" : "#if(($context.arguments.toAdd))SET #field = #field + :increment#end#if(($context.arguments.toDelete))SET #field = #field + :decrement#end",
+       
+        "expressionNames" : {
+            #if(($context.arguments.toAdd))
+                "#field": "${ctx.args.toAdd}"
+            #end
+            #if(($context.arguments.toDelete))
+                "#field": "${ctx.args.toDelete}"
+            #end
+        },
+
+        "expressionValues" : {
+            #if(($context.arguments.toAdd))
+                ":increment": $util.dynamodb.toDynamoDBJson(1)
+            #end
+            #if(($context.arguments.toDelete))
+                ":decrement": $util.dynamodb.toDynamoDBJson(-1)
+            #end
+        }
+    }
+}

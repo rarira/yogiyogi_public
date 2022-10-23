@@ -1,0 +1,42 @@
+## Automatically set the updatedAt timestamp. **
+$util.qr($context.args.input.put("updatedAt", $util.defaultIfNull($ctx.args.input.updatedAt,
+$util.time.nowISO8601())))
+$util.qr($context.args.input.put("__typename", "Class"))
+
+{
+  "version": "2017-02-28",
+  "operation": "UpdateItem",
+  "key": {
+    "id": {"S": "${ctx.args.input.blockedBy}"}
+  }, 
+  "update": {
+    #if(($context.arguments.input.classId))
+      "expression": "SET updatedAt = :upTime ADD blockedClass :value",
+      "expressionValues" : {
+        ":upTime": {"S": "${ctx.args.input.updatedAt}"},
+        ":value": {"SS": ["${ctx.args.input.classId}"]}
+      }
+    #end
+    #if(($context.arguments.input.userId))
+      "expression": "SET updatedAt = :upTime ADD blockedUser :value",
+      "expressionValues" : {
+        ":upTime": {"S": "${ctx.args.input.updatedAt}"},
+        ":value": {"SS": ["${ctx.args.input.userId}"]}
+      }
+    #end
+    #if(($context.arguments.input.convId))
+      "expression": "SET updatedAt = :upTime ADD blockedConv :value",
+      "expressionValues" : {
+        ":upTime": {"S": "${ctx.args.input.updatedAt}"},
+        ":value": {"SS": ["${ctx.args.input.convId}"]}
+      }
+    #end
+    #if(($context.arguments.input.postId))
+      "expression": "SET updatedAt = :upTime ADD blockedPost :value",
+      "expressionValues" : {
+        ":upTime": {"S": "${ctx.args.input.updatedAt}"},
+        ":value": {"SS": ["${ctx.args.input.postId}"]}
+      }
+    #end
+  }
+}

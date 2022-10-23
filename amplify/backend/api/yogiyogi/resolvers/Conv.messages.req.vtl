@@ -1,0 +1,30 @@
+## #set( $limit = $util.defaultIfNull($context.args.limit, 1) )
+#set( $query = {
+"expression": "#connectionAttribute = :connectionAttribute",
+  "expressionNames": {
+      "#connectionAttribute": "notiConvId"
+  },
+  "expressionValues": {
+      ":connectionAttribute": {
+          "S": "$context.source.id"
+    }
+  }
+} )
+{
+  "version": "2017-02-28",
+  "operation": "Query",
+  "query":   $util.toJson($query),
+  "scanIndexForward":   false,
+  "filter":   #if( $context.args.filter )
+$util.transform.toDynamoDBFilterExpression($ctx.args.filter)
+  #else
+null
+  #end,
+  "limit": 1,
+  "nextToken":   #if( $context.args.nextToken )
+"$context.args.nextToken"
+  #else
+null
+  #end,
+  "index": "gsi_ConvNoti"
+}

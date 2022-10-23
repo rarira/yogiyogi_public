@@ -1,0 +1,9 @@
+<resources>
+	<!-- <string moduleConfig="true" name="CodePushDeploymentKey">9ce8f203-d24f-45a3-bd17-413857c00da7</string> -->
+    <string name="app_name">요기요기</string>
+    <string name="kakao_app_key">92c3eac4942eb5998e3e43fd051c99aa</string>
+    <string name="kakao_scheme">kakao92c3eac4942eb5998e3e43fd051c99aa</string>
+    <string name="kakaolink_host">kakaolink</string>
+    <string name="branch_scheme">yogiyogi.app.link</string>
+    <string name="app_scheme">yoyo</string>
+</resources>

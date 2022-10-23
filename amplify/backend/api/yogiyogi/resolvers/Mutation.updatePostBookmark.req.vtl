@@ -1,0 +1,34 @@
+{
+	"version" : "2017-02-28",
+    "operation": "UpdateItem",
+    "key": {
+        "id": $util.dynamodb.toDynamoDBJson($ctx.args.userId)
+    },
+    "update": {
+    	"expression" : "#if(($context.arguments.reset))SET postBookmark = :reset#end#if(($context.arguments.toAdd))SET postBookmark.#toAddId = :bool, postBookmark.used = :bool ADD postBookmark.#count :increment#end#if(($context.arguments.toDelete))REMOVE postBookmark.#toDelId ADD postBookmark.#count :decrement#end",
+        #if(!($context.arguments.reset))
+        "expressionNames" : {
+            #if(($context.arguments.toAdd))
+                "#toAddId": "${ctx.args.toAdd}",
+                "#count": "count"
+            #end
+            #if(($context.arguments.toDelete))
+                "#toDelId": "${ctx.args.toDelete}",
+                "#count": "count"
+            #end
+        },
+        #end
+        "expressionValues" : {
+            #if(($context.arguments.toAdd))
+                ":increment": $util.dynamodb.toDynamoDBJson(1),
+                ":bool": $util.dynamodb.toDynamoDBJson(true)
+            #end
+            #if(($context.arguments.toDelete))
+                ":decrement": $util.dynamodb.toDynamoDBJson(-1)
+            #end
+            #if(($context.arguments.reset))
+                ":reset": $util.dynamodb.toMapJson({"count": 0, "used": true})
+            #end
+        }
+    }
+}

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>750864981126-kvprcl6ltb5qk78jo06k7s7lflj1572t.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.750864981126-kvprcl6ltb5qk78jo06k7s7lflj1572t</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>750864981126-to5rmrno1qv57sj3ujej830jbcu8j262.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDehPxw31BEFUJ_9VEeGbY1ek9Z6mNC-Lc</string>
+	<key>GCM_SENDER_ID</key>
+	<string>750864981126</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.rarira.yogiyogi</string>
+	<key>PROJECT_ID</key>
+	<string>yogiyogi</string>
+	<key>STORAGE_BUCKET</key>
+	<string>yogiyogi.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:750864981126:ios:06a15e70e9d847c53e8507</string>
+	<key>DATABASE_URL</key>
+	<string>https://yogiyogi.firebaseio.com</string>
+</dict>
+</plist>

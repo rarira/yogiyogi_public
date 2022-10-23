@@ -1,0 +1,28 @@
+## [Start] Set the primary @key. **
+## #set( $modelObjectKey = {
+## "id": $util.dynamodb.toDynamoDB($ctx.args.input.createClassReview.id),
+##   "createdAt": $util.dynamodb.toDynamoDB($ctx.args.input.createClassReview.createdAt)
+## } )
+## [End] Set the primary @key. **
+
+## [Start] Prepare DynamoDB PutItem Request. **
+$util.qr($context.args.input.createClassReview.put("createdAt",
+$util.defaultIfNull($ctx.args.input.createClassReview.createdAt, $util.time.nowISO8601())))
+$util.qr($context.args.input.createClassReview.put("updatedAt",
+$util.defaultIfNull($ctx.args.input.createClassReview.updatedAt, $util.time.nowISO8601())))
+$util.qr($context.args.input.createClassReview.put("__typename", "Reviews"))
+{
+  "version": "2017-02-28",
+  "operation": "PutItem",
+  "key": #if( $modelObjectKey ) $util.toJson($modelObjectKey) #else {
+  "id":   $util.dynamodb.toDynamoDBJson($util.defaultIfNullOrBlank($ctx.args.input.createClassReview.id, $util.autoId()))
+} #end,
+  "attributeValues": $util.dynamodb.toMapValuesJson($context.args.input.createClassReview),
+  "condition": {
+      "expression": "attribute_not_exists(#id)",
+      "expressionNames": {
+          "#id": "id"
+    }
+  }
+}
+## [End] Prepare DynamoDB PutItem Request. **

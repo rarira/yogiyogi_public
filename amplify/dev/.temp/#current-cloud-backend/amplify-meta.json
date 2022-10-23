@@ -1,0 +1,247 @@
+{
+	"providers": {
+		"awscloudformation": {
+			"AuthRoleName": "yogiyogi-20190420142746-authRole",
+			"UnauthRoleArn": "arn:aws:iam::082649551475:role/yogiyogi-20190420142746-unauthRole",
+			"AuthRoleArn": "arn:aws:iam::082649551475:role/yogiyogi-20190420142746-authRole",
+			"Region": "ap-northeast-2",
+			"DeploymentBucketName": "yogiyogi-20190420142746-deployment",
+			"UnauthRoleName": "yogiyogi-20190420142746-unauthRole",
+			"StackName": "yogiyogi-20190420142746",
+			"StackId": "arn:aws:cloudformation:ap-northeast-2:082649551475:stack/yogiyogi-20190420142746/080f4f50-632d-11e9-bd55-0addd5de9b96",
+			"AmplifyAppId": "d2yy7dcqu80r1l"
+		},
+		"categories": {
+			"auth": {
+				"yogiyogi": {}
+			}
+		}
+	},
+	"auth": {
+		"yogiyogi": {
+			"service": "Cognito",
+			"providerPlugin": "awscloudformation",
+			"output": {
+				"AppClientSecret": "1h3apq56382jj73g2duvbn40u8kusg11ufq3r3djdkq3c9ghc7ph",
+				"UserPoolId": "ap-northeast-2_2qC6CPvZF",
+				"AppClientIDWeb": "7uquv2m6atq9jj1e0e4djgqcts",
+				"AppClientID": "git4ec1a5mdtr21l8gr5rvnul",
+				"IdentityPoolId": "ap-northeast-2:6aa22824-f80f-4182-9a09-bd612e331dbf",
+				"IdentityPoolName": "yogiyogi2591aafa_identitypool_2591aafa__dev",
+				"UserPoolName": "yogiyogi2591aafa_userpool_2591aafa"
+			},
+			"lastPushTimeStamp": "2019-12-17T05:44:54.451Z",
+			"providerMetadata": {
+				"s3TemplateURL": "https://s3.amazonaws.com/yogiyogi-20190420142746-deployment/amplify-cfn-templates/auth/yogiyogi-cloudformation-template.yml",
+				"logicalId": "authyogiyogi"
+			},
+			"dependsOn": []
+		}
+	},
+	"api": {
+		"yogiyogi": {
+			"service": "AppSync",
+			"providerPlugin": "awscloudformation",
+			"output": {
+				"GraphQLAPIIdOutput": "p7nt6t7fgvbw5jnh3yi2cuy3dy",
+				"GraphQLAPIEndpointOutput": "https://w736rsbx55a7vnx5jxvxh4anz4.appsync-api.ap-northeast-2.amazonaws.com/graphql",
+				"authConfig": {
+					"additionalAuthenticationProviders": [
+						{
+							"authenticationType": "API_KEY",
+							"apiKeyConfig": {
+								"description": "guestClient",
+								"apiKeyExpirationDays": 180
+							}
+						}
+					],
+					"defaultAuthentication": {
+						"authenticationType": "AMAZON_COGNITO_USER_POOLS",
+						"userPoolConfig": {
+							"userPoolId": "authyogiyogi"
+						}
+					}
+				},
+				"GraphQLAPIKeyOutput": "da2-jbfxi3xi6nh2vj2yx4a5kk4ley"
+			},
+			"lastPushTimeStamp": "2019-12-17T05:44:54.452Z",
+			"providerMetadata": {
+				"s3TemplateURL": "https://s3.amazonaws.com/yogiyogi-20190420142746-deployment/amplify-cfn-templates/api/cloudformation-template.json",
+				"logicalId": "apiyogiyogi"
+			},
+			"lastPushDirHash": "IbjEPLXuYVR22hQHaSr1BfWfy8Y="
+		}
+	},
+	"function": {
+		"cognitoNewUser2DynamoDB": {
+			"service": "Lambda",
+			"providerPlugin": "awscloudformation",
+			"build": true,
+			"dependsOn": [],
+			"output": {
+				"Region": "ap-northeast-2",
+				"Arn": "arn:aws:lambda:ap-northeast-2:082649551475:function:cognitoNewUser2DynamoDB-dev",
+				"Name": "cognitoNewUser2DynamoDB-dev"
+			},
+			"lastPushTimeStamp": "2019-12-17T05:44:54.454Z",
+			"providerMetadata": {
+				"s3TemplateURL": "https://s3.amazonaws.com/yogiyogi-20190420142746-deployment/amplify-cfn-templates/function/cognitoNewUser2DynamoDB-cloudformation-template.json",
+				"logicalId": "functioncognitoNewUser2DynamoDB"
+			},
+			"lastBuildTimeStamp": "2019-10-20T15:34:48.835Z",
+			"lastPackageTimeStamp": "2019-12-08T13:41:02.894Z",
+			"distZipFilename": "cognitoNewUser2DynamoDB-4f422f45414a4b6a5834-build.zip",
+			"lastPushDirHash": "XhrLJOKnFPOhXRKvjclc2TudSOQ="
+		},
+		"updateClassChange": {
+			"service": "Lambda",
+			"providerPlugin": "awscloudformation",
+			"build": true,
+			"output": {
+				"Region": "ap-northeast-2",
+				"Arn": "arn:aws:lambda:ap-northeast-2:082649551475:function:updateClassChange-dev",
+				"Name": "updateClassChange-dev"
+			},
+			"lastPushTimeStamp": "2019-12-17T05:44:54.465Z",
+			"providerMetadata": {
+				"s3TemplateURL": "https://s3.amazonaws.com/yogiyogi-20190420142746-deployment/amplify-cfn-templates/function/updateClassChange-cloudformation-template.json",
+				"logicalId": "functionupdateClassChange"
+			},
+			"lastBuildTimeStamp": "2019-11-21T17:32:38.297Z",
+			"lastPackageTimeStamp": "2019-12-17T05:43:53.105Z",
+			"distZipFilename": "updateClassChange-31775a48552f42476d63-build.zip",
+			"lastPushDirHash": "fRlEFuPAfOt2wc7xGk+alwonAsU="
+		},
+		"reportSendMail": {
+			"service": "Lambda",
+			"providerPlugin": "awscloudformation",
+			"build": true,
+			"output": {
+				"Region": "ap-northeast-2",
+				"Arn": "arn:aws:lambda:ap-northeast-2:082649551475:function:reportSendMail-dev",
+				"Name": "reportSendMail-dev"
+			},
+			"lastPushTimeStamp": "2019-12-17T05:44:54.458Z",
+			"providerMetadata": {
+				"s3TemplateURL": "https://s3.amazonaws.com/yogiyogi-20190420142746-deployment/amplify-cfn-templates/function/reportSendMail-cloudformation-template.json",
+				"logicalId": "functionreportSendMail"
+			}
+		},
+		"closeClass": {
+			"service": "Lambda",
+			"providerPlugin": "awscloudformation",
+			"build": true,
+			"lastBuildTimeStamp": "2019-10-06T10:54:32.375Z",
+			"lastPackageTimeStamp": "2019-11-18T11:40:04.378Z",
+			"distZipFilename": "closeClass-674b4539737a55613661-build.zip",
+			"providerMetadata": {
+				"s3TemplateURL": "https://s3.amazonaws.com/yogiyogi-20190420142746-deployment/amplify-cfn-templates/function/closeClass-cloudformation-template.json",
+				"logicalId": "functioncloseClass"
+			},
+			"lastPushTimeStamp": "2019-12-17T05:44:54.460Z",
+			"output": {
+				"Region": "ap-northeast-2",
+				"Arn": "arn:aws:lambda:ap-northeast-2:082649551475:function:closeClass-dev",
+				"Name": "closeClass-dev",
+				"LambdaExecutionRole": "yogiyogiLambdaRole6d696213-dev"
+			},
+			"lastPushDirHash": "RZ3yKo6ibs3yz0BR787F9ALaAKM="
+		},
+		"sendNotis": {
+			"service": "Lambda",
+			"providerPlugin": "awscloudformation",
+			"build": true,
+			"lastBuildTimeStamp": "2019-10-08T15:07:54.143Z",
+			"lastPackageTimeStamp": "2019-12-17T05:43:52.961Z",
+			"distZipFilename": "sendNotis-626e41704275346c4c50-build.zip",
+			"providerMetadata": {
+				"s3TemplateURL": "https://s3.amazonaws.com/yogiyogi-20190420142746-deployment/amplify-cfn-templates/function/sendNotis-cloudformation-template.json",
+				"logicalId": "functionsendNotis"
+			},
+			"lastPushTimeStamp": "2019-12-17T05:44:54.465Z",
+			"output": {
+				"Region": "ap-northeast-2",
+				"Arn": "arn:aws:lambda:ap-northeast-2:082649551475:function:sendNotis-dev",
+				"Name": "sendNotis-dev",
+				"LambdaExecutionRole": "yogiyogiLambdaRolee871fee3-dev"
+			},
+			"lastPushDirHash": "MtQSD+QNb/uLmPQaPclD493kEJs="
+		},
+		"disableUser": {
+			"service": "Lambda",
+			"providerPlugin": "awscloudformation",
+			"build": true,
+			"lastBuildTimeStamp": "2019-10-30T15:41:55.785Z",
+			"lastPackageTimeStamp": "2019-10-30T15:52:00.126Z",
+			"distZipFilename": "disableUser-476d50344b363441374d-build.zip",
+			"providerMetadata": {
+				"s3TemplateURL": "https://s3.amazonaws.com/yogiyogi-20190420142746-deployment/amplify-cfn-templates/function/disableUser-cloudformation-template.json",
+				"logicalId": "functiondisableUser"
+			},
+			"lastPushTimeStamp": "2019-12-17T05:44:54.461Z",
+			"output": {
+				"Region": "ap-northeast-2",
+				"Arn": "arn:aws:lambda:ap-northeast-2:082649551475:function:disableUser-dev",
+				"Name": "disableUser-dev",
+				"LambdaExecutionRole": "yogiyogiLambdaRole341d78ae-dev"
+			},
+			"lastPushDirHash": "7vynOuDJvLe8RxIDJhoRI4Tz3cM="
+		},
+		"updateTagCounter": {
+			"service": "Lambda",
+			"providerPlugin": "awscloudformation",
+			"build": true,
+			"lastBuildTimeStamp": "2019-11-18T11:40:04.271Z",
+			"lastPackageTimeStamp": "2019-11-18T15:24:55.160Z",
+			"distZipFilename": "updateTagCounter-5578462b784c31356859-build.zip",
+			"providerMetadata": {
+				"s3TemplateURL": "https://s3.amazonaws.com/yogiyogi-20190420142746-deployment/amplify-cfn-templates/function/updateTagCounter-cloudformation-template.json",
+				"logicalId": "functionupdateTagCounter"
+			},
+			"lastPushTimeStamp": "2019-12-17T05:44:54.462Z",
+			"output": {
+				"Region": "ap-northeast-2",
+				"Arn": "arn:aws:lambda:ap-northeast-2:082649551475:function:updateTagCounter-dev",
+				"Name": "updateTagCounter-dev",
+				"LambdaExecutionRole": "yogiyogiLambdaRole414b933f-dev"
+			},
+			"lastPushDirHash": "BmvQJCOZZZ5ScPcQ1rtGXwp9z8A="
+		},
+		"updateAllNoti": {
+			"service": "Lambda",
+			"providerPlugin": "awscloudformation",
+			"build": true,
+			"lastBuildTimeStamp": "2019-11-21T16:48:12.572Z",
+			"lastPackageTimeStamp": "2019-11-21T19:03:30.357Z",
+			"distZipFilename": "updateAllNoti-5736784649313236364f-build.zip",
+			"providerMetadata": {
+				"s3TemplateURL": "https://s3.amazonaws.com/yogiyogi-20190420142746-deployment/amplify-cfn-templates/function/updateAllNoti-cloudformation-template.json",
+				"logicalId": "functionupdateAllNoti"
+			},
+			"lastPushTimeStamp": "2019-12-17T05:44:54.463Z",
+			"output": {
+				"Region": "ap-northeast-2",
+				"Arn": "arn:aws:lambda:ap-northeast-2:082649551475:function:updateAllNoti-dev",
+				"Name": "updateAllNoti-dev",
+				"LambdaExecutionRole": "yogiyogiLambdaRole883f4a12-dev"
+			},
+			"lastPushDirHash": "dD3Jr9cSwis7owhuW/gKgcE1bWc="
+		}
+	},
+	"storage": {
+		"yogiyogi": {
+			"service": "S3",
+			"providerPlugin": "awscloudformation",
+			"output": {
+				"BucketName": "yogiyogi52afe4a196a4453cbc039f70d8630e87-dev",
+				"Region": "ap-northeast-2"
+			},
+			"lastPushTimeStamp": "2019-12-17T05:44:54.463Z",
+			"providerMetadata": {
+				"s3TemplateURL": "https://s3.amazonaws.com/yogiyogi-20190420142746-deployment/amplify-cfn-templates/storage/s3-cloudformation-template.json",
+				"logicalId": "storageyogiyogi"
+			}
+		}
+	},
+	"hosting": {}
+}

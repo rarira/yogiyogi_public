@@ -1,0 +1,22 @@
+## Automatically set the updatedAt timestamp. **
+$util.qr($context.args.input.put("updatedAt", $util.defaultIfNull($ctx.args.input.updatedAt,
+$util.time.nowISO8601())))
+$util.qr($context.args.input.put("__typename", "User"))
+
+{
+  "version": "2017-02-28",
+  "operation": "UpdateItem",
+  "key": {
+    "id": {"S": "${ctx.args.input.userId}"}
+  }, 
+  "update": {
+    "expression": "SET updatedAt = :upTime ADD blockedBy :user#if(($context.arguments.input.numOfReported)), numOfReported :number#{end}",
+    "expressionValues" : {
+      ":user":{ "SS": [ "${ctx.args.input.blockedBy}" ] },
+      ":upTime": {"S": "${ctx.args.input.updatedAt}"}
+      #if(($context.arguments.input.numOfReported))
+      ,":number": {"N": "${ctx.args.input.numOfReported}"}
+      #end   
+    }
+  }
+}

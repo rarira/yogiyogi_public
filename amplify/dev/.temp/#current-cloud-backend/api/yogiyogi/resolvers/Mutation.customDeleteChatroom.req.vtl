@@ -1,0 +1,26 @@
+{
+	"version" : "2017-02-28",
+    "operation": "UpdateItem",
+    "key": {
+        "id": $util.dynamodb.toDynamoDBJson($ctx.args.id)
+    },
+    "update": {
+    	"expression" : "SET convStatus=:status, #if(($context.arguments.user1exited))user1exited=:user1Id#{end}#if(($context.arguments.user2exited))user2exited=:user2Id#{end}", 
+        "expressionValues": {
+            ":status":$util.dynamodb.toStringJson("exited"),
+      
+            #if(($context.arguments.user1exited))
+            ":user1Id":$util.dynamodb.toStringJson($ctx.args.user1exited)
+            #{end}
+            #if(($context.arguments.user2exited))      
+            ":user2Id":$util.dynamodb.toStringJson($ctx.args.user2exited)       
+            #end
+        }
+    },
+    "condition": {
+        "expression": "attribute_exists(#id)",
+        "expressionNames": {
+            "#id": "id"
+        }
+    }
+}

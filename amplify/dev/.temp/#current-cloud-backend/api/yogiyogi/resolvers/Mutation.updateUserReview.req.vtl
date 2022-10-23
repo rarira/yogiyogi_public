@@ -1,0 +1,81 @@
+#set( $expValues = {} )
+#set( $expSet = {} )
+## #if ($context.args.input.createClassReview.satisfaction == 'good')
+##     $util.qr($expValues.put(":good", $util.dynamodb.toDynamoDB(20)))
+## #else
+##     $util.qr($expValues.put(":bad", $util.dynamodb.toDynamoDB(-50)))
+## #end
+
+#foreach( $entry in $context.args.input.createClassReview.manners)
+    $util.qr($expSet.put("mannerCounter.$entry", ":increment"))
+#end
+#set( $expression = "" )
+#if( !$expSet.isEmpty() )
+    #set( $expression = "ADD" )
+    #foreach( $entry in $expSet.entrySet() )
+        #set( $expression = "$expression $entry.key $entry.value," )
+        ## #if( $foreach.hasNext() )
+        ## #set( $expression = "$expression," )
+        ## #end
+    #end
+    $util.qr($expValues.put(":increment", $util.dynamodb.toDynamoDB(1)))
+#end
+
+## #set ( $expression = "$expression ratings.receivedReviewCounter :increment" )
+## #if ($context.args.input.createClassReview.satisfaction == 'good')
+##     #set ( $expression = "$expression, ratings.satisfiedReviewCounter :increment" )
+## #end
+#if ($context.args.input.createClassReview.type == 'hostReview')
+    #if ($expression == "")
+        #set( $expression = "ADD" )
+        ## #else
+        ##     #set( $expression = "$expression,") 
+    #end
+    #set ( $expression = "$expression ratings.receivedHostReviewCounter :increment" )
+    #if ($context.args.input.createClassReview.satisfaction == 'good')
+        #set ( $expression = "$expression, ratings.satisfiedHostReviewCounter :increment" )
+        ## #else 
+        ##     #set ( $expression = "$expression, ratings :bad" )
+    #end
+    $util.qr($expValues.put(":increment", $util.dynamodb.toDynamoDB(1)))
+#end
+#if ($context.args.input.createClassReview.type == 'proxyReview')
+    #if ($expression == "")
+        #set( $expression = "ADD" )
+        ## #else
+        ##     #set( $expression = "$expression,") 
+    #end
+    #set ( $expression = "$expression ratings.receivedProxyReviewCounter :increment" )
+    #if ($context.args.input.createClassReview.satisfaction == 'good')
+        #set ( $expression = "$expression, ratings.satisfiedProxyReviewCounter :increment" )
+        ## #else 
+        ##     #set ( $expression = "$expression, proxyRating :bad" )
+    #end
+    $util.qr($expValues.put(":increment", $util.dynamodb.toDynamoDB(1)))
+#end
+#if ($context.args.input.createClassReview.type == 'mannerReview')
+    #if ($expression == "")
+        #set( $expression = "SET" )
+    #else
+        #set( $expressionLength = $expression.length() - 1)
+        #set( $expression = "$expression.substring(0,$expressionLength) SET") 
+    #end
+    #set ( $expression = "$expression mannerReviewed = list_append(if_not_exists(mannerReviewed,
+    :emptyList), :reviewerId)" )
+    $util.qr($expValues.put(":emptyList", $util.dynamodb.toDynamoDB([])))
+    $util.qr($expValues.put(":reviewerId",
+    $util.dynamodb.toDynamoDB([$ctx.args.input.createClassReview.reviewsReviewerId])))
+#end
+#set( $update = {} )
+$util.qr($update.put("expression", "$expression"))
+#if( !$expValues.isEmpty() )
+    $util.qr($update.put("expressionValues", $expValues))
+#end
+{
+	"version" : "2017-02-28",
+    "operation": "UpdateItem",
+    "key": {
+        "id": $util.dynamodb.toDynamoDBJson($ctx.args.input.createClassReview.reviewsRevieweeId)
+    },
+    "update": $util.toJson($update)
+}

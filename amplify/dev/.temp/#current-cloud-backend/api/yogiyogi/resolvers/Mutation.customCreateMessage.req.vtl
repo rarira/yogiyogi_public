@@ -1,0 +1,27 @@
+## [Start] Set the primary @key. **
+#set( $modelObjectKey = {
+"id": $util.dynamodb.toDynamoDB($ctx.args.notiId),
+  "createdAt": $util.dynamodb.toDynamoDB($ctx.args.createdAt)
+} )
+## [End] Set the primary @key. **
+
+## [Start] Prepare DynamoDB PutItem Request. **
+$util.qr($context.args.put("createdAt", $util.defaultIfNull($ctx.args.createdAt, $util.time.nowISO8601())))
+$util.qr($context.args.put("updatedAt", $util.defaultIfNull($ctx.args.updatedAt, $util.time.nowISO8601())))
+$util.qr($context.args.put("notiType", "message"))
+$util.qr($context.args.put("__typename", "Noti"))
+{
+  "version": "2017-02-28",
+  "operation": "PutItem",
+  "key": #if( $modelObjectKey ) $util.toJson($modelObjectKey) #else {
+  "id":   $util.dynamodb.toDynamoDBJson($util.defaultIfNullOrBlank($ctx.args.notiId, $util.autoId()))
+} #end,
+  "attributeValues": $util.dynamodb.toMapValuesJson($context.args),
+  "condition": {
+      "expression": "attribute_not_exists(#id)",
+      "expressionNames": {
+          "#id": "id"
+    }
+  }
+}
+## [End] Prepare DynamoDB PutItem Request. **

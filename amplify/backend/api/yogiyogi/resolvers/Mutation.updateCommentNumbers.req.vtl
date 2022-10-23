@@ -1,0 +1,35 @@
+{
+	"version" : "2017-02-28",
+    "operation": "UpdateItem",
+    "key": {
+        "id": $util.dynamodb.toDynamoDBJson($ctx.args.commentId)
+   
+    },
+    "update": {
+    	"expression" : "#if(($context.arguments.addLike))SET numOfLikes = numOfLikes + :increment ADD likedUsers :userId#end#if(($context.arguments.delLike))SET numOfLikes = numOfLikes + :decrement DELETE likedUsers :userId#end#if(($context.arguments.addBlock))SET numOfReported = numOfReported + :increment ADD blockedBy :userId#end#if(($context.arguments.addSub))SET numOfSub = numOfSub + :increment, commentLatestSubCommentId = :id#end#if(($context.arguments.delSub))SET numOfSub = numOfSub + :decrement, commentLatestSubCommentId = :id#end",
+
+
+        "expressionValues" : {
+            #if(($context.arguments.addLike))
+                ":increment": $util.dynamodb.toDynamoDBJson(1),
+                ":userId": $util.dynamodb.toStringSetJson([$ctx.args.userId])
+            #end
+            #if(($context.arguments.delLike))
+                ":decrement": $util.dynamodb.toDynamoDBJson(-1),
+                ":userId": $util.dynamodb.toStringSetJson([$ctx.args.userId])
+            #end
+            #if(($context.arguments.addBlock))
+                ":increment": $util.dynamodb.toDynamoDBJson(1),
+                ":userId": $util.dynamodb.toStringSetJson([$ctx.args.userId])
+            #end
+            #if(($context.arguments.addSub))
+                ":id": $util.dynamodb.toDynamoDBJson($ctx.args.addSub),
+                ":increment": $util.dynamodb.toDynamoDBJson(1)
+            #end
+            #if(($context.arguments.delSub))
+                ":id": $util.dynamodb.toDynamoDBJson($ctx.args.delSub),
+                ":decrement": $util.dynamodb.toDynamoDBJson(-1)
+            #end
+        }
+    }
+}

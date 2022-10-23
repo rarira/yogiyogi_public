@@ -1,0 +1,20 @@
+{
+  "version": "2017-02-28",
+  "operation": "UpdateItem",
+  "key": {
+    "id": {
+      "S": "$context.args.input.classId"
+    }
+  },
+  "update": {
+	"expression" : "SET classStatus = :status, expiresAt = :time, #if($context.arguments.input.createClassReview.type == 'hostReview')classHostReviewId = :reviewId#{end}#if($context.arguments.input.createClassReview.type == 'proxyReview')classProxyReviewId = :reviewId, classProxyId = :proxyId#{end}",
+    "expressionValues": {
+        ":status":$util.dynamodb.toDynamoDBJson($context.arguments.input.classStatus),
+        ":time":$util.dynamodb.toDynamoDBJson($context.arguments.input.expiresAt),
+        ":reviewId":$util.dynamodb.toDynamoDBJson($context.arguments.input.createClassReview.id)
+        #if($context.arguments.input.createClassReview.type == 'proxyReview')
+          ,":proxyId":$util.dynamodb.toDynamoDBJson($context.arguments.input.proxyId)
+        #end
+    }
+  }
+}

@@ -1,0 +1,16 @@
+#set($ids = [])
+#foreach($id in ${ctx.args.ids})
+    #set($map = {})
+    $util.qr($map.put("id", $util.dynamodb.toString($id)))
+    $util.qr($ids.add($map))
+#end
+
+{
+    "version" : "2018-05-29",
+    "operation" : "BatchGetItem",
+    "tables" : {
+        "Class-wsoqb5adrzggdniumdr33ufgka-master": {
+            "keys": $util.toJson($ids)
+        }
+    }
+}

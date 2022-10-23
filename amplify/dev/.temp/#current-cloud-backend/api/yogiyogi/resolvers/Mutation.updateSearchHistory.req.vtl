@@ -1,0 +1,21 @@
+{
+	"version" : "2017-02-28",
+    "operation": "UpdateItem",
+    "key": {
+        "id": $util.dynamodb.toDynamoDBJson($ctx.args.userId)
+    },
+    "update": {
+    	"expression" : "#if(($context.arguments.reset))REMOVE #historyType#end#if(($context.arguments.toAdd))ADD #historyType :addTerm#end#if(($context.arguments.toDelete))DELETE #historyType :delTerm#end",
+        "expressionNames" : {
+            "#historyType": "${ctx.args.type}",
+        },
+        "expressionValues" : {
+            #if(($context.arguments.toAdd))
+                ":addTerm": $util.dynamodb.toStringSetJson($ctx.args.toAdd)
+            #end
+            #if(($context.arguments.toDelete))
+                ":delTerm": $util.dynamodb.toStringSetJson($ctx.args.toDelete)
+            #end
+        }
+    }
+}

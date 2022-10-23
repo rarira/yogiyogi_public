@@ -1,0 +1,14 @@
+{
+    "AppSyncApiName": "yogiyogi",
+    "DynamoDBBillingMode": "PROVISIONED",
+    "DynamoDBModelTableReadIOPS": 1,
+    "DynamoDBModelTableWriteIOPS": 1,
+    "AuthCognitoUserPoolId": {
+        "Fn::GetAtt": [
+            "authyogiyogi",
+            "Outputs.UserPoolId"
+        ]
+    },
+    "APIKeyExirationEpoch": -1,
+    "SouldCreateAPIKey": 0
+}

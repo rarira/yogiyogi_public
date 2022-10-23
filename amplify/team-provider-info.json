@@ -1,0 +1,84 @@
+{
+  "newdev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-yogiyogi-newdev-153607-authRole",
+      "UnauthRoleArn": "arn:aws:iam::804013288255:role/amplify-yogiyogi-newdev-153607-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::804013288255:role/amplify-yogiyogi-newdev-153607-authRole",
+      "Region": "ap-northeast-2",
+      "DeploymentBucketName": "amplify-yogiyogi-newdev-153607-deployment",
+      "UnauthRoleName": "amplify-yogiyogi-newdev-153607-unauthRole",
+      "StackName": "amplify-yogiyogi-newdev-153607",
+      "StackId": "arn:aws:cloudformation:ap-northeast-2:804013288255:stack/amplify-yogiyogi-newdev-153607/b85dbf30-2160-11ea-96c3-061aa88a6b90",
+      "AmplifyAppId": "d2d2ri5adw75oa"
+    },
+    "categories": {
+      "auth": {
+        "yogiyogi": {}
+      }
+    }
+  },
+  "master": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-yogiyogi-master-11403-authRole",
+      "UnauthRoleArn": "arn:aws:iam::082649551475:role/amplify-yogiyogi-master-11403-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::082649551475:role/amplify-yogiyogi-master-11403-authRole",
+      "Region": "ap-northeast-2",
+      "DeploymentBucketName": "amplify-yogiyogi-master-11403-deployment",
+      "UnauthRoleName": "amplify-yogiyogi-master-11403-unauthRole",
+      "StackName": "amplify-yogiyogi-master-11403",
+      "StackId": "arn:aws:cloudformation:ap-northeast-2:082649551475:stack/amplify-yogiyogi-master-11403/91ef6ed0-2731-11ea-965f-06f846be6a12",
+      "AmplifyAppId": "d2yy7dcqu80r1l"
+    },
+    "categories": {
+      "auth": {
+        "yogiyogi": {}
+      },
+      "function": {
+        "closeClass": {
+          "deploymentBucketName": "amplify-yogiyogi-master-11403-deployment",
+          "s3Key": "amplify-builds/closeClass-76534c4d51516a305556-build.zip"
+        },
+        "disableUser": {
+          "deploymentBucketName": "amplify-yogiyogi-master-11403-deployment",
+          "s3Key": "amplify-builds/disableUser-74465163726739454c68-build.zip"
+        },
+        "reportSendMail": {
+          "deploymentBucketName": "amplify-yogiyogi-master-11403-deployment",
+          "s3Key": "amplify-builds/reportSendMail-475478676c663437684e-build.zip"
+        },
+        "sendNotis": {
+          "deploymentBucketName": "amplify-yogiyogi-master-11403-deployment",
+          "s3Key": "amplify-builds/sendNotis-5772774c7439484e6833-build.zip"
+        },
+        "updateAllNoti": {
+          "deploymentBucketName": "amplify-yogiyogi-master-11403-deployment",
+          "s3Key": "amplify-builds/updateAllNoti-384f6761446f3930416c-build.zip"
+        },
+        "updateClassChange": {
+          "deploymentBucketName": "amplify-yogiyogi-master-11403-deployment",
+          "s3Key": "amplify-builds/updateClassChange-63566b30396b6d635a6e-build.zip"
+        },
+        "updateTagCounter": {
+          "deploymentBucketName": "amplify-yogiyogi-master-11403-deployment",
+          "s3Key": "amplify-builds/updateTagCounter-4b6172344348434a6a46-build.zip"
+        },
+        "addNewUser": {
+          "deploymentBucketName": "amplify-yogiyogi-master-11403-deployment",
+          "s3Key": "amplify-builds/addNewUser-454b6a31745455315230-build.zip"
+        },
+        "updateLastLoginTime": {
+          "deploymentBucketName": "amplify-yogiyogi-master-11403-deployment",
+          "s3Key": "amplify-builds/updateLastLoginTime-6430514e424230423973-build.zip"
+        },
+        "sendCommNoti": {
+          "deploymentBucketName": "amplify-yogiyogi-master-11403-deployment",
+          "s3Key": "amplify-builds/sendCommNoti-7733586f4b2b4a744b30-build.zip"
+        },
+        "newInfoPost": {
+          "deploymentBucketName": "amplify-yogiyogi-master-11403-deployment",
+          "s3Key": "amplify-builds/newInfoPost-3346714c715a50615151-build.zip"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,802 @@
+type Class
+  @model
+  # @searchable
+  @auth(rules: [{ allow: private, provider: userPools }, { allow: public, provider: apiKey, operations: [create, read] }])
+  @key(name: "gsi-ClassHostUser", fields: ["classHostId", "createdAt"], queryField: "listClasssByHost")
+  @key(name: "gsi-ClassStatusExpiresAt", fields: ["classStatus", "expiresAt"], queryField: "listClasssByClassStatus") {
+  id: ID!
+  title: String!
+  center: Center! @connection
+  dateStart: Int!
+  dateEnd: Int
+  isLongTerm: Boolean!
+  dayOfWeek: String
+  timeStart: Int!
+  timeStartString: AWSTime!
+  timeEnd: Int!
+  timeEndString: AWSTime!
+  hostReview: Reviews @connection
+  classHostReviewId: ID
+  proxyReview: Reviews @connection
+  classProxyReviewId: ID
+  numOfClass: Int!
+  classFee: Int!
+  host: User! @connection(fields: ["classHostId"])
+  tagSearchable: String
+  regionSearchable: String
+  memo: String
+  classStatus: ClassStatusType!
+  createdAt: AWSDateTime!
+  createdAtEpoch: Int
+  classCenterId: ID!
+  classHostId: String!
+  classProxyId: ID
+  expiresAt: AWSTimestamp!
+  expireType: String
+  blockedBy: [String]
+  numOfReported: Int
+  convs: [Conv] @connection(name: "ClassConvs")
+  updateCounter: Int!
+  firstCreatedAt: AWSDateTime!
+  firstCreatedAtEpoch: Int!
+  extraInfo: ClassExtraInfo
+}
+
+type Reviews
+  @model
+  @auth(rules: [{ allow: private, provider: userPools }])
+  @key(name: "gsi-ReceivedReview", fields: ["reviewsRevieweeId", "createdAt"], queryField: "listReviewsByReviewee") {
+  id: ID!
+  type: ReviewType!
+  satisfaction: SatisfactionType!
+  reviewedClass: Class @connection
+  reviewsReviewedClassId: ID
+  reviewer: User! @connection
+  reviewsReviewerId: ID!
+  reviewee: User! @connection(name: "ReceivedReview", sortField: "createdAt")
+  reviewsRevieweeId: ID!
+  createdAt: AWSDateTime!
+  manners: [String]
+  content: String
+}
+
+type Center @auth(rules: [{ allow: private, provider: userPools }, { allow: public, provider: apiKey, operations: [read] }]) @model {
+  id: String!
+  type: CenterType!
+  name: String!
+  address: String!
+  tel: String
+  lng: String!
+  lat: String!
+  homepage: String
+  category: String
+  createdAt: AWSDateTime
+  apiId: String
+  myCenterUsers: [MyCenter] @connection(name: "CenterUser")
+}
+
+type Noti
+  @model
+  @auth(rules: [{ allow: private, provider: userPools }])
+  @key(fields: ["id", "createdAt"])
+  @key(name: "gsi_ReceiverKindCreatedAt", fields: ["notiReceiverId", "notiKind", "createdAt"], queryField: "listNotisByReceiverKindCreatedAt")
+  # @key(name: "gsi_ReceiverType", fields: ["notiReceiverId", "notiType"], queryField: "listNotisByReceiverType")
+  @key(name: "gsi_ConvNoti", fields: ["notiConvId", "createdAt"], queryField: "listMessages") {
+  id: ID!
+  notiKind: String!
+  notiType: String!
+  receiver: User @connection
+  notiReceiverId: ID!
+  receiverName: String
+  sender: User @connection
+  notiSenderId: ID
+  senderName: String
+  targetType: NotiTargetType
+  targetId: ID
+  content: String
+  extraInfo: String
+  createdAt: AWSDateTime!
+  expiresAt: AWSTimestamp!
+  blockedBy: [String]
+  numOfReported: Int
+  conv: Conv @connection(name: "ConvNoti", sortField: "createdAt")
+  notiConvId: ID
+}
+
+type Conv
+  @model
+  @auth(rules: [{ allow: private, provider: userPools }, { allow: public, provider: apiKey, operations: [read] }])
+  # @searchable
+  @key(name: "gsi-ClassConvs", fields: ["convOnClassId", "createdAt"], queryField: "listConvsByClass") {
+  id: ID!
+  onClass: Class @connection(name: "ClassConvs", sortField: "createdAt")
+  convOnClassId: ID!
+  convStatus: ConvStatusType!
+  user1: User! @connection
+  user1state: String
+  user1exited: String
+  convUser1Id: String!
+  user2: User! @connection
+  user2state: String
+  user2exited: String
+  convUser2Id: ID!
+  messages: [Noti] @connection(name: "ConvNoti", sortField: "createdAt")
+  createdAt: AWSDateTime!
+}
+
+type User @auth(rules: [{ allow: private, provider: userPools }, { allow: public, provider: apiKey, operations: [read] }]) @model {
+  id: String!
+  name: String
+  intro: String
+  picture: S3Object
+  oauthPicture: String
+  identityId: String
+  email: String
+  resumeURL: String
+  instagramId: String
+  facebookId: String
+  receivedReviews: [Reviews] @connection(name: "ReceivedReview", sortField: "createdAt")
+  subscribedTags: [String]
+  lastSubscribedTagsUpdated: Int
+  profileUpdated: Boolean
+  bookmark: AWSJSON
+  postBookmark: AWSJSON
+  simpleSearchHistory: [String]
+  detailSearchHistory: [String]
+  addressTag: String
+  blockedBy: [ID]
+  blockedUser: [ID]
+  blockedClass: [ID]
+  blockedPost: [ID]
+  mannerReviewed: [ID]
+  numOfReported: Int
+  mannerCounter: MannerCounter
+  ratings: Ratings!
+  settings: Settings!
+  accountStatus: AccountStatusType!
+  lastReadClassAt: Int
+  lastLoginAt: AWSTimestamp!
+  cellPhoneNumber: String
+}
+
+type Settings @aws_api_key @aws_cognito_user_pools {
+  privacyResume: Boolean!
+  privacyManners: Boolean!
+}
+
+type S3Object @aws_api_key @aws_cognito_user_pools {
+  bucket: String!
+  region: String!
+  key: String!
+}
+
+type MyCenter
+  @model
+  @auth(rules: [{ allow: private, provider: userPools }, { allow: public, provider: apiKey, operations: [create, read] }])
+  @key(fields: ["id", "createdAt"])
+  @key(name: "gsi-UserCenter", fields: ["myCenterUserId", "createdAt"], queryField: "listMyCentersByUser") {
+  id: ID!
+  center: Center! @connection(name: "CenterUser")
+  createdAt: AWSDateTime!
+  myCenterUserId: String!
+  myCenterCenterId: String!
+}
+
+type News
+  @model
+  @auth(rules: [{ allow: private, provider: userPools }, { allow: public, provider: apiKey, operations: [read] }])
+  @key(fields: ["id", "createdAt"])
+  @key(name: "gsi-NewsType", fields: ["newsType", "createdAt"], queryField: "listNewsByType") {
+  id: ID!
+  newsType: NewsType!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+  newsStatus: NewsStatus!
+  newsTitle: String
+  newsURL: String
+  newsScreen: String
+  newsBanner: S3Object
+  validDate: AWSDateTime!
+  extraInfo: String
+  extraData: AWSJSON
+}
+
+enum NewsType {
+  notice
+  event
+  promotion
+  hot
+  tags
+}
+
+enum NewsStatus {
+  valid
+  invalid
+  hold
+}
+
+type Post
+  @model
+  @auth(rules: [{ allow: private, provider: userPools }, { allow: public, provider: apiKey, operations: [create, read] }])
+  @key(name: "gsi-PostCategory", fields: ["postCategory", "createdAt"], queryField: "listPostsByCategory")
+  @key(name: "gsi-PostAuthor", fields: ["postAuthorId", "createdAt"], queryField: "listPostsByAuthor")
+  @key(name: "gsi-PostType", fields: ["postType", "createdAt"], queryField: "listPostsByType") {
+  id: ID!
+  postTitle: String!
+  postStatus: PostStatus!
+  postType: PostType!
+  postCategory: PostCategory!
+  author: User! @connection(fields: ["postAuthorId"])
+  postAuthorId: String!
+  createdAt: AWSDateTime!
+  postLink: String
+  postTags: String
+  postPicture: [S3Object]
+  postContent: String!
+  numOfViews: Int!
+  numOfLikes: Int!
+  numOfComments: Int!
+  thumbnailURL: String
+  blockedBy: [String]
+  numOfReported: Int
+  updatedAt: AWSDateTime
+}
+
+enum PostStatus {
+  open
+  closed
+  deleted
+  blocked
+  authorDisabled
+}
+
+enum PostType {
+  comm
+  shop
+}
+
+enum PostCategory {
+  misc
+  info
+  pr
+  notice
+}
+
+type Comment
+  @model
+  @auth(rules: [{ allow: private, provider: userPools }, { allow: public, provider: apiKey, operations: [create, read] }])
+  @key(
+    name: "gsi_CommentReceiverByCommentNotiStatus"
+    fields: ["commentReceiverId", "commentNotiStatus", "createdAt"]
+    queryField: "listCommentsByReceiver"
+  )
+  @key(name: "gsi-CommentAddedTo", fields: ["addedToId", "createdAt"], queryField: "listCommentsByAddedTo") {
+  id: ID!
+  addedToId: ID!
+  originalId: ID!
+  createdAt: AWSDateTime!
+  commentType: CommentType!
+  commentDepth: CommentDepth!
+  commentStatus: CommentStatus!
+  commentNotiStatus: CommentNotiStatus!
+  commentContent: String!
+  author: User! @connection(fields: ["commentAuthorId"])
+  commentAuthorId: String!
+  commentAuthorName: String!
+  receiver: User! @connection(fields: ["commentReceiverId"])
+  commentReceiverId: String!
+  numOfReported: Int!
+  numOfLikes: Int!
+  likedUsers: [String]
+  numOfSub: Int
+  blockedBy: [String]
+  latestSubComment: Comment @connection
+  commentLatestSubCommentId: ID
+  replyInfo: ReplyInfo!
+}
+
+type ReplyInfo @aws_api_key @aws_cognito_user_pools {
+  repliedToId: ID!
+  repliedPostTitle: String!
+}
+
+enum CommentType {
+  POST
+}
+
+enum CommentDepth {
+  MAIN
+  SUB
+}
+
+enum CommentStatus {
+  OPEN
+  BLOCKED
+  DELETED
+}
+
+enum CommentNotiStatus {
+  OPEN
+  DELETED
+}
+
+type ModelMyCenterConnection {
+  items: [MyCenter]
+  nextToken: String
+}
+
+type Ratings @aws_api_key @aws_cognito_user_pools {
+  completedClassCounter: Int!
+  hostedClassCounter: Int!
+  proxiedClassCounter: Int!
+  cancelledClassCounter: Int!
+  receivedHostReviewCounter: Int!
+  satisfiedHostReviewCounter: Int!
+  receivedProxyReviewCounter: Int!
+  satisfiedProxyReviewCounter: Int!
+}
+
+type MannerCounter @aws_api_key @aws_cognito_user_pools {
+  gm01: Int
+  gm02: Int
+  gm03: Int
+  gm04: Int
+  gm05: Int
+  gm06: Int
+  gm07: Int
+  gm08: Int
+  gm09: Int
+  gm10: Int
+  gm11: Int
+  gm12: Int
+  gm13: Int
+  gm14: Int
+  gm15: Int
+  gm16: Int
+  bm01: Int
+  bm02: Int
+  bm03: Int
+  bm04: Int
+  bm05: Int
+  bm06: Int
+  bm07: Int
+  bm08: Int
+  bm09: Int
+  bm10: Int
+  bm11: Int
+  bm12: Int
+  bm13: Int
+  bm14: Int
+  bm15: Int
+  bm16: Int
+}
+
+enum SatisfactionType {
+  good
+  bad
+}
+
+enum AccountStatusType {
+  active
+  disabled
+}
+
+enum ConvStatusType {
+  open
+  exited
+}
+
+enum ClassStatusType {
+  open
+  reserved
+  cancelled
+  closed
+  completed
+  proxied
+  reviewed
+  hostDisabled
+}
+
+enum NotiTargetType {
+  classTarget
+  postTarget
+  reviewTarget
+  noTarget
+}
+
+enum CenterType {
+  daumAPI
+  userAdded
+}
+
+enum ReviewType {
+  hostReview
+  proxyReview
+  mannerReview
+}
+
+enum DayType {
+  sun
+  mon
+  tue
+  wed
+  thu
+  fri
+  sat
+}
+
+enum SearchableClassSortableFields {
+  id
+  title
+  dateStart
+  dateEnd
+  isLongTerm
+  dayOfWeek
+  timeStart
+  timeStartString
+  timeEnd
+  timeEndString
+  numOfClass
+  classFee
+  tagSearchable
+  regionSearchable
+  memo
+  createdAt
+  createdAtEpoch
+  classCenterId
+  classHostId
+  firstCreatedAt
+  firstCreatedAtEpoch
+}
+enum SearchableSortDirection {
+  asc
+  desc
+}
+
+enum ReportTargetType {
+  classReport
+  userReport
+  disableUser
+  postReport
+  commentReport
+}
+
+type Query {
+  listBookmarkedClass(ids: [ID]): [Class]
+  listBookmarkedPost(ids: [ID]): [Post]
+}
+
+type Mutation {
+  specialAddClass(input: SpecialAddClassInput, secretKey: String!): Class @aws_api_key @aws_cognito_user_pools
+  addClassBlock(input: UpdateBlockInput): Class
+  deleteClassBlock(input: UpdateBlockInput): Class
+  addUserBlock(input: UpdateBlockInput): User
+  deleteUserBlock(input: UpdateBlockInput): User
+  addPostBlock(input: UpdateBlockInput): User
+  deletePostBlock(input: UpdateBlockInput): User
+  updateUserTags(input: UpdateUserTagsInput): User
+  reportSendMail(input: ReportSendMailInput): String
+  createMessage(
+    id: ID!
+    notiReceiverId: ID!
+    notiSenderId: ID
+    senderName: String
+    content: String
+    extraInfo: String
+    createdAt: AWSDateTime!
+    expiresAt: AWSTimestamp!
+    notiConvId: ID!
+  ): Noti
+  createChatroom(
+    id: ID
+    convOnClassId: ID!
+    convStatus: ConvStatusType!
+    user1state: String
+    convUser1Id: ID!
+    user2state: String
+    convUser2Id: ID!
+    createdAt: AWSDateTime!
+  ): Conv
+  deleteChatroom(
+    id: ID!
+    notiId: ID!
+    notiReceiverId: ID!
+    notiSenderId: ID
+    senderName: String
+    content: String
+    extraInfo: String
+    createdAt: AWSDateTime!
+    expiresAt: AWSTimestamp!
+    notiConvId: ID!
+    user1exited: ID
+    user2exited: ID
+  ): Conv
+  updateConvUserState(id: ID!, user1state: String, user2state: String): Conv
+  pipelineCreateClassReview(input: CreateClassReviewInput): Reviews
+  adminDisableUser(userId: ID!): String @function(name: "disableUser-${env}")
+  updateTagsCounter(type: String!, toAdd: [String], toDelete: [String]): String @function(name: "updateTagCounter-${env}")
+  updateUserSettings(id: ID!, privacyManners: Boolean!, privacyResume: Boolean!): User
+  createUserReview(input: CreateUserReviewInput): Reviews
+  updateBookmark(userId: ID!, toAdd: String, toDelete: String, reset: Boolean): User
+  updatePostBookmark(userId: ID!, toAdd: String, toDelete: String, postCreatedAt: String, reset: Boolean): User
+  updatePostNumbers(id: ID!, toAdd: String, toDelete: String): Post
+  updateCommentNumbers(
+    commentId: ID!
+    userId: ID!
+    addLike: Boolean
+    delLike: Boolean
+    addBlock: Boolean # delBlock: Boolean
+    addSub: ID
+    delSub: ID
+  ): Comment
+}
+
+type Subscription {
+  onCreateMessage(notiConvId: ID!): Noti @aws_subscribe(mutations: ["createMessage"])
+  onReceiveMessage(notiReceiverId: ID!): Noti @aws_subscribe(mutations: ["createMessage"])
+  onCreateChatroom1(convUser1Id: ID!): Conv @aws_subscribe(mutations: ["createChatroom"])
+  onCreateChatroom2(convUser2Id: ID!): Conv @aws_subscribe(mutations: ["createChatroom"])
+  onCreateChatroom3(convOnClassId: ID!): Conv @aws_subscribe(mutations: ["createChatroom"])
+  onDeleteChatroom(id: ID!): Conv @aws_subscribe(mutations: ["deleteChatroom"])
+  onUpdateConvUserState(id: ID!): Conv @aws_subscribe(mutations: ["updateConvUserState"])
+  onCreatePostType(postType: PostType!): Post @aws_subscribe(mutations: ["createPost"])
+  onCreatePostCategory(postCategory: PostCategory!): Post @aws_subscribe(mutations: ["createPost"])
+  onCreatePostComment(addedToId: ID!): Comment @aws_subscribe(mutations: ["createComment"])
+  onCustomUpdatePost(id: ID!): Post @aws_subscribe(mutations: ["updatePost", "updatePostNumbers"])
+  onCustomUpdateClass(id: ID!): Class @aws_subscribe(mutations: ["updateClass", "addClassBlock", "deleteClassBlock"])
+}
+
+input CreateUserReviewInput {
+  createClassReview: CreateReviewsInput!
+}
+
+input CreateClassReviewInput {
+  classId: ID!
+  userId: ID!
+  expiresAt: AWSTimestamp!
+  classStatus: ClassStatusType!
+  proxyId: ID
+  createClassReview: CreateReviewsInput!
+}
+
+input CreateReviewsInput {
+  id: ID!
+  type: ReviewType!
+  satisfaction: SatisfactionType!
+  reviewsReviewedClassId: ID
+  reviewsReviewerId: ID!
+  reviewsRevieweeId: ID!
+  manners: [String]
+  content: String
+}
+
+input SpecialAddClassInput {
+  id: ID!
+  title: String!
+  dateStart: Int!
+  dateEnd: Int
+  isLongTerm: Boolean!
+  dayOfWeek: String
+  timeStart: Int!
+  timeStartString: String!
+  timeEnd: Int!
+  timeEndString: String!
+  numOfClass: Int!
+  classFee: Int!
+  tagSearchable: String
+  regionSearchable: String
+  memo: String
+  classStatus: ClassStatusType
+  createdAt: String!
+  createdAtEpoch: Int!
+  classCenterId: String!
+  classHostId: String!
+  expiresAt: Int!
+  updateCounter: Int!
+  firstCreatedAt: String!
+  firstCreatedAtEpoch: Int!
+  extraInfo: ClassExtraInfoInput!
+}
+
+type ClassExtraInfo @aws_api_key @aws_cognito_user_pools {
+  classOrigin: String!
+  centerName: String!
+  centerAddress: String!
+  centerX: String!
+  centerY: String!
+  centerPhone: String
+  centerHomepage: String
+  hostPhone: String
+  hostEmail: String
+}
+
+input ClassExtraInfoInput {
+  classOrigin: String!
+  centerName: String!
+  centerAddress: String!
+  centerX: String!
+  centerY: String!
+  centerPhone: String
+  centerHomepage: String
+  hostPhone: String
+  hostEmail: String
+}
+
+input CustomCreateClassInput {
+  id: ID
+  title: String!
+  dateStart: Int!
+  dateEnd: Int
+  isLongTerm: Boolean!
+  dayOfWeek: String
+  timeStart: Int!
+  timeStartString: AWSTime!
+  timeEnd: Int!
+  timeEndString: AWSTime!
+  numOfClass: Int!
+  classFee: Int!
+  updateCounter: Int!
+  tagSearchable: String
+  regionSearchable: String
+  memo: String
+  classStatus: ClassStatusType!
+  createdAt: AWSDateTime
+  firstCreatedAt: AWSDateTime
+  classCenterId: ID!
+  classHostId: ID!
+  classProxyId: ID
+  expiresAt: AWSTimestamp!
+  blockedBy: [String]
+  numOfReported: Int
+}
+
+input CreateUserTagInput {
+  userTagTagId: ID!
+  userTagUserId: ID!
+}
+
+input SearchableBooleanFilterInput {
+  eq: Boolean
+  ne: Boolean
+}
+
+input SearchableClassFilterInput {
+  id: SearchableIDFilterInput
+  title: SearchableStringFilterInput
+  dateStart: SearchableIntFilterInput
+  dateEnd: SearchableIntFilterInput
+  isLongTerm: SearchableBooleanFilterInput
+  dayOfWeek: SearchableStringFilterInput
+  timeStart: SearchableIntFilterInput
+  timeStartString: SearchableStringFilterInput
+  timeEnd: SearchableIntFilterInput
+  timeEndString: SearchableStringFilterInput
+  classHostReviewId: SearchableIDFilterInput
+  classProxyReviewId: SearchableIDFilterInput
+  numOfClass: SearchableIntFilterInput
+  classFee: SearchableIntFilterInput
+  tagSearchable: SearchableStringFilterInput
+  regionSearchable: SearchableStringFilterInput
+  memo: SearchableStringFilterInput
+  createdAt: SearchableStringFilterInput
+  createdAtEpoch: SearchableIntFilterInput
+  classCenterId: SearchableIDFilterInput
+  classHostId: SearchableIDFilterInput
+  classProxyId: SearchableIDFilterInput
+  expiresAt: SearchableIntFilterInput
+  blockedBy: SearchableStringFilterInput
+  numOfReported: SearchableIntFilterInput
+  updateCounter: SearchableIntFilterInput
+  firstCreatedAt: SearchableStringFilterInput
+  firstCreatedAtEpoch: SearchableIntFilterInput
+  classStatus: SearchableStringFilterInput
+  and: [SearchableClassFilterInput]
+  or: [SearchableClassFilterInput]
+  not: SearchableClassFilterInput
+}
+
+input SearchableClassSortInput {
+  field: SearchableClassSortableFields
+  direction: SearchableSortDirection
+}
+
+input SearchableFloatFilterInput {
+  ne: Float
+  gt: Float
+  lt: Float
+  gte: Float
+  lte: Float
+  eq: Float
+  range: [Float]
+}
+
+input SearchableIDFilterInput {
+  ne: ID
+  eq: ID
+  match: ID
+  matchPhrase: ID
+  matchPhrasePrefix: ID
+  multiMatch: ID
+  exists: Boolean
+  wildcard: ID
+  regexp: ID
+}
+
+input SearchableIntFilterInput {
+  ne: Int
+  gt: Int
+  lt: Int
+  gte: Int
+  lte: Int
+  eq: Int
+  range: [Int]
+}
+
+input SearchableStringFilterInput {
+  ne: String
+  eq: String
+  match: String
+  matchPhrase: String
+  matchPhrasePrefix: String
+  multiMatch: String
+  exists: Boolean
+  wildcard: String
+  regexp: String
+}
+
+input SearchableConvFilterInput {
+  id: SearchableIDFilterInput
+  convOnClassId: SearchableIDFilterInput
+  user1state: SearchableStringFilterInput
+  user1exited: SearchableIDFilterInput
+  convUser1Id: SearchableIDFilterInput
+  user2state: SearchableStringFilterInput
+  user2exited: SearchableIDFilterInput
+  convUser2Id: SearchableIDFilterInput
+  createdAt: SearchableStringFilterInput
+  blockedBy: SearchableIDFilterInput
+  convStatus: SearchableStringFilterInput
+  and: [SearchableConvFilterInput]
+  or: [SearchableConvFilterInput]
+  not: SearchableConvFilterInput
+}
+
+input CreateNotiInput {
+  id: ID!
+  notiType: String!
+  notiReceiverId: ID!
+  receiverName: String
+  notiSenderId: ID
+  senderName: String
+  targetType: NotiTargetType
+  targetId: ID
+  content: String
+  extraInfo: String
+  createdAt: AWSDateTime!
+  expiresAt: AWSTimestamp!
+  notiConvId: ID
+}
+
+input UpdateBlockInput {
+  blockedBy: ID!
+  classId: ID
+  userId: ID
+  convId: ID
+  postId: ID
+  numOfReported: Int
+}
+
+input UpdateUserTagsInput {
+  id: ID!
+  toAdd: [String]
+  toDelete: [String]
+  lastSubscribedTagsUpdated: Int!
+}
+
+input ReportSendMailInput {
+  reporterId: ID!
+  reportTargetType: ReportTargetType!
+  targetId: ID!
+  reportCategory: String!
+  extraInfo: String
+}
